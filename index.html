@@ -1239,10 +1239,12 @@
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    /* ── Contact form demo handler ── */
+ /* ── Contact form handler with Web3Forms & Toast ── */
+    // Łapiemy formularz po ID, które masz w HTML, czyli 'contact-form'
     const form  = document.getElementById('contact-form');
     const toast = document.getElementById('toast');
     const toastMsg = document.getElementById('toast-msg');
+    const submitBtn = form.querySelector('button[type="submit"]');
 
     function showToast(msg, success = true) {
       toastMsg.textContent = msg;
@@ -1254,12 +1256,14 @@
       setTimeout(() => toast.classList.remove('show'), 3500);
     }
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
+
       const name    = document.getElementById('name').value.trim();
       const email   = document.getElementById('email').value.trim();
       const message = document.getElementById('message').value.trim();
 
+      // Twoja oryginalna walidacja pól
       if (!name || !email || !message) {
         showToast('Please fill in all required fields.', false);
         return;
@@ -1270,46 +1274,41 @@
         return;
       }
 
-const form = document.getElementById('form');
-const submitBtn = form.querySelector('button[type="submit"]');
+      // Zbieramy dane i dorzucamy Twój klucz Web3Forms
+      const formData = new FormData(form);
+      formData.append("access_key", "f3c490dc-bf15-4652-877b-96ea517e63c8");
 
-form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+      // Blokujemy przycisk na czas wysyłki
+      const originalText = submitBtn.innerHTML; // Używamy innerHTML, żeby zachować ikonę samolocika
+      submitBtn.textContent = "Sending...";
+      submitBtn.disabled = true;
 
-    const formData = new FormData(form);
-    formData.append("access_key", "f3c490dc-bf15-4652-877b-96ea517e63c8");
-
-    const originalText = submitBtn.textContent;
-
-    submitBtn.textContent = "Sending...";
-    submitBtn.disabled = true;
-
-    try {
+      try {
         const response = await fetch("https://api.web3forms.com/submit", {
-            method: "POST",
-            body: formData
+          method: "POST",
+          body: formData
         });
 
         const data = await response.json();
 
         if (response.ok) {
-            alert("Success! Your message has been sent.");
-            form.reset();
+          // Sukces: Odpalamy Twój ładny Toast i czyścimy form
+          showToast(`Thanks ${name}! I'll get back to you soon. ✉️`, true);
+          form.reset();
         } else {
-            alert("Error: " + data.message);
+          // Serwer odrzucił paczkę
+          showToast("Error: " + data.message, false);
         }
 
-    } catch (error) {
-        alert("Something went wrong. Please try again.");
-    } finally {
-        submitBtn.textContent = originalText;
+      } catch (error) {
+        // Błąd sieci
+        showToast("Something went wrong. Please try again.", false);
+      } finally {
+        // Przywracamy przycisk do stanu początkowego
+        submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
-    }
-});
-      showToast(`Thanks ${name}! I'll get back to you soon. ✉️`);
-      form.reset();
+      }
     });
-
     /* ── Smooth scroll for all anchor links ── */
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', (e) => {

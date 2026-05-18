@@ -1239,7 +1239,7 @@
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    /* ── Contact form demo handler ── */
+   /* ── Contact form demo handler ── */
     const form  = document.getElementById('contact-form');
     const toast = document.getElementById('toast');
     const toastMsg = document.getElementById('toast-msg');
@@ -1270,15 +1270,37 @@
         return;
       }
 
-      /*
-        TODO: Replace this block with a real form submission.
-        Options:
-          1. Fetch to your PHP endpoint: fetch('/mailer.php', { method:'POST', body: new FormData(form) })
-          2. Formspree: <form action="https://formspree.io/f/YOUR_ID" method="POST">
-          3. EmailJS: emailjs.send(...)
-      */
-      showToast(`Thanks ${name}! I'll get back to you soon. ✉️`);
-      form.reset();
+      // Zmieniamy informację na przycisku na czas wysyłania
+      showToast('Sending your message...', true);
+
+      // Pakujemy dane z formularza do formatu JSON
+      const formData = new FormData(form);
+      const object = Object.fromEntries(formData);
+      const json = JSON.stringify(object);
+
+      // Wysyłamy ukryte żądanie do Web3Forms
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: json
+      })
+      .then(async (response) => {
+        if (response.status == 200) {
+          // Sukces: Odpalamy Twój oryginalny toast i czyścimy pola
+          showToast(`Thanks ${name}! I'll get back to you soon. ✉️`, true);
+          form.reset();
+        } else {
+          // Coś nie tak z serwerem/kluczem
+          showToast('Server error. Please try again later.', false);
+        }
+      })
+      .catch(error => {
+        // Brak internetu / błąd sieci
+        showToast('Network error. Check your connection.', false);
+      });
     });
 
     /* ── Smooth scroll for all anchor links ── */

@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paweł Binda — Developer Portfolio</title>
+
+  <!-- Google Fonts: Syne (display) + DM Sans (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome (icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    /* ── Tailwind config ── */
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Syne', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+          colors: {
+            bg:      '#0a0b0f',
+            surface: '#111318',
+            card:    '#161820',
+            border:  '#1e2028',
+            accent:  '#4f8ef7',       /* electric blue */
+            accent2: '#8b5cf6',       /* violet */
+            muted:   '#6b7280',
+            text:    '#e8eaf0',
+          },
+          boxShadow: {
+            glow:  '0 0 40px rgba(79,142,247,0.18)',
+            glow2: '0 0 60px rgba(139,92,246,0.14)',
+            card:  '0 4px 32px rgba(0,0,0,0.45)',
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ── Root vars & base ── */
+    :root {
+      --accent: #4f8ef7;
+      --accent2: #8b5cf6;
+      --bg: #0a0b0f;
+      --surface: #111318;
+      --card: #161820;
+      --border: #1e2028;
+      --text: #e8eaf0;
+      --muted: #6b7280;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Syne', sans-serif; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* ── Noise texture overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ── Gradient mesh background ── */
+    .bg-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .bg-mesh::before {
+      content: '';
+      position: absolute;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(79,142,247,0.07) 0%, transparent 70%);
+      top: -200px; left: -150px;
+    }
+    .bg-mesh::after {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%);
+      bottom: -100px; right: -100px;
+    }
+
+    /* ── Section wrapper ── */
+    .section-wrap {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Section label ── */
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 24px; height: 1.5px;
+      background: var(--accent);
+    }
+
+    /* ── Glassmorphism nav ── */
+    #navbar {
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      background: rgba(10,11,15,0.72);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+    #navbar.scrolled {
+      background: rgba(10,11,15,0.92);
+      box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+    }
+
+    /* ── Nav links ── */
+    .nav-link {
+      position: relative;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      color: var(--muted);
+      transition: color 0.25s;
+      padding: 4px 0;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      left: 0; bottom: -2px;
+      width: 0; height: 1.5px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover { color: var(--text); }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link.active { color: var(--accent); }
+    .nav-link.active::after { width: 100%; }
+
+    /* ── CTA buttons ── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 0.875rem;
+      letter-spacing: 0.02em;
+      padding: 12px 28px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.25s, box-shadow 0.25s, background 0.25s;
+      text-decoration: none;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(79,142,247,0.4);
+      background: #6aa0ff;
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 0.875rem;
+      letter-spacing: 0.02em;
+      padding: 11px 28px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s, color 0.25s;
+      text-decoration: none;
+    }
+    .btn-outline:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(79,142,247,0.25);
+    }
+
+    /* ── Hero headline gradient ── */
+    .headline-gradient {
+      background: linear-gradient(135deg, #e8eaf0 30%, #4f8ef7 70%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Profile image frame ── */
+    .profile-frame {
+      position: relative;
+      width: 340px;
+      height: 380px;
+    }
+    .profile-frame::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 28px 8px 28px 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      z-index: 0;
+    }
+    .profile-frame::after {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      border-radius: 40px 12px 40px 12px;
+      border: 1px solid rgba(79,142,247,0.15);
+      z-index: 0;
+      animation: pulse-border 3s ease-in-out infinite;
+    }
+    @keyframes pulse-border {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      50%       { opacity: 1;   transform: scale(1.02); }
+    }
+    .profile-inner {
+      position: relative;
+      z-index: 1;
+      width: 100%; height: 100%;
+      background: var(--surface);
+      border-radius: 26px 6px 26px 6px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .profile-glow {
+      position: absolute;
+      inset: -40px;
+      background: radial-gradient(circle, rgba(79,142,247,0.15) 0%, transparent 65%);
+      z-index: -1;
+      filter: blur(20px);
+    }
+
+    /* ── Skill card ── */
+    .skill-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: default;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .skill-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(79,142,247,0.35);
+      box-shadow: 0 8px 32px rgba(79,142,247,0.12);
+    }
+    .skill-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    /* ── Project card ── */
+    .project-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+    }
+    .project-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(79,142,247,0.3);
+      box-shadow: 0 16px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(79,142,247,0.1);
+    }
+    .project-img {
+      width: 100%; height: 200px;
+      object-fit: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .project-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 50%, rgba(22,24,32,0.9) 100%);
+    }
+
+    /* ── Tech tag ── */
+    .tech-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+    }
+
+    /* ── Contact form ── */
+    .form-field {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    .form-field::placeholder { color: var(--muted); }
+    .form-field:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(79,142,247,0.12);
+    }
+
+    /* ── Contact info item ── */
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: border-color 0.25s;
+    }
+    .contact-item:hover { border-color: rgba(79,142,247,0.3); }
+    .contact-icon {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      background: rgba(79,142,247,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    /* ── About badge ── */
+    .cert-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(79,142,247,0.08);
+      border: 1px solid rgba(79,142,247,0.22);
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #a3c4fb;
+    }
+
+    /* ── Mobile menu ── */
+    #mobile-menu {
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      padding: 12px 0 16px;
+      border-top: 1px solid var(--border);
+    }
+    #mobile-menu.open { display: flex; }
+    .mobile-nav-link {
+      display: block;
+      padding: 10px 16px;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background 0.2s, color 0.2s;
+      text-decoration: none;
+    }
+    .mobile-nav-link:hover {
+      background: rgba(79,142,247,0.08);
+      color: var(--accent);
+    }
+
+    /* ── Hamburger ── */
+    .hamburger { cursor: pointer; }
+    .hamburger .bar {
+      display: block;
+      width: 22px; height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+      transform-origin: center;
+    }
+    .hamburger .bar + .bar { margin-top: 5px; }
+    .hamburger.open .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open .bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ── Divider ── */
+    .divider {
+      width: 100%; height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), transparent);
+    }
+
+    /* ── Scroll-reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Floating dots decoration ── */
+    .dots-grid {
+      background-image: radial-gradient(circle, rgba(79,142,247,0.18) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    /* ── Stat pill ── */
+    .stat-pill {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 28px;
+      text-align: center;
+    }
+
+    /* ── Footer social ── */
+    .social-btn {
+      width: 38px; height: 38px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      transition: border-color 0.25s, color 0.25s, background 0.25s;
+      text-decoration: none;
+    }
+    .social-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(79,142,247,0.08);
+    }
+
+    /* ── Toast notification ── */
+    #toast {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      background: var(--card);
+      border: 1px solid rgba(79,142,247,0.3);
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-size: 0.875rem;
+      color: var(--text);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      z-index: 10000;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.4s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ░░░ BACKGROUND MESH ░░░ -->
+  <div class="bg-mesh" aria-hidden="true"></div>
+
+  <!-- ════════════════════════════════════════
+       NAVIGATION
+  ════════════════════════════════════════ -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="#home" class="flex items-center gap-2 text-text no-underline">
+          <span class="w-8 h-8 rounded-lg bg-accent flex items-center justify-center text-white font-display font-bold text-sm">PB</span>
+          <span class="font-display font-700 text-[0.95rem] tracking-tight">Paweł<span class="text-accent">.</span></span>
+        </a>
+
+        <!-- Desktop nav links -->
+        <div class="hidden md:flex items-center gap-8">
+          <a href="#home"    class="nav-link">Home</a>
+          <a href="#about"   class="nav-link">About Me</a>
+          <a href="#skills"  class="nav-link">Skills</a>
+          <a href="#projects"class="nav-link">Projects</a>
+          <a href="#contact" class="nav-link">Contact</a>
+        </div>
+
+        <!-- Hire me CTA + hamburger -->
+        <div class="flex items-center gap-4">
+          <a href="#contact" class="hidden md:inline-flex btn-primary text-sm py-2 px-5">
+            Hire Me <i class="fa-solid fa-arrow-right text-xs"></i>
+          </a>
+          <!-- Hamburger (mobile only) -->
+          <button id="hamburger" class="hamburger md:hidden flex flex-col" aria-label="Toggle menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+          </button>
+        </div>
+
+      </div><!-- /flex -->
+
+      <!-- Mobile menu dropdown -->
+      <div id="mobile-menu">
+        <a href="#home"     class="mobile-nav-link">Home</a>
+        <a href="#about"    class="mobile-nav-link">About Me</a>
+        <a href="#skills"   class="mobile-nav-link">Skills</a>
+        <a href="#projects" class="mobile-nav-link">Projects</a>
+        <a href="#contact"  class="mobile-nav-link">Contact</a>
+        <div class="mt-3 px-2">
+          <a href="#contact" class="btn-primary w-full justify-center">Hire Me</a>
+        </div>
+      </div>
+
+    </div>
+  </nav>
+
+
+  <!-- ════════════════════════════════════════
+       HERO SECTION
+  ════════════════════════════════════════ -->
+  <section id="home" class="section-wrap min-h-screen flex items-center pt-16">
+    <div class="max-w-6xl mx-auto px-6 py-24 w-full">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+        <!-- Left: text -->
+        <div>
+          <!-- Status badge -->
+          <div class="inline-flex items-center gap-2 bg-surface border border-border rounded-full px-4 py-2 text-[0.75rem] text-muted mb-8">
+            <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+            Available for freelance & full-time work
+          </div>
+
+          <h1 class="font-display font-800 text-[clamp(2.2rem,5vw,3.6rem)] leading-[1.1] mb-6 reveal">
+            <span class="headline-gradient">Crafting Clean Code</span><br>
+            &amp; Functional<br>
+            <span style="color:var(--accent2)">Websites.</span>
+          </h1>
+
+          <p class="text-muted text-[1.05rem] leading-relaxed max-w-[480px] mb-10 reveal" style="transition-delay:0.1s">
+            I'm a passionate developer who turns ideas into polished, responsive web experiences — 
+            writing maintainable code and building products people actually enjoy using.
+          </p>
+
+          <div class="flex flex-wrap gap-4 reveal" style="transition-delay:0.2s">
+            <a href="#projects" class="btn-primary">
+              <i class="fa-solid fa-layer-group text-xs"></i> View My Work
+            </a>
+            <a href="#contact" class="btn-outline">
+              <i class="fa-regular fa-envelope text-xs"></i> Contact Me
+            </a>
+          </div>
+
+          <!-- Quick stats -->
+          <div class="grid grid-cols-3 gap-4 mt-14 reveal" style="transition-delay:0.3s">
+            <div class="stat-pill">
+              <span class="font-display font-700 text-[1.6rem] text-accent">2+</span>
+              <span class="text-[0.72rem] text-muted mt-1 uppercase tracking-wider">Years Exp.</span>
+            </div>
+            <div class="stat-pill">
+              <span class="font-display font-700 text-[1.6rem] text-accent">10+</span>
+              <span class="text-[0.72rem] text-muted mt-1 uppercase tracking-wider">Projects</span>
+            </div>
+            <div class="stat-pill">
+              <span class="font-display font-700 text-[1.6rem] text-accent">7</span>
+              <span class="text-[0.72rem] text-muted mt-1 uppercase tracking-wider">Tech Stack</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: profile image frame -->
+        <div class="flex justify-center lg:justify-end reveal" style="transition-delay:0.25s">
+          <div class="relative">
+            <!-- Glow effect -->
+            <div class="profile-glow"></div>
+
+            <!-- Dots grid decoration -->
+            <div class="dots-grid absolute -top-8 -right-8 w-32 h-32 opacity-40 rounded-xl" aria-hidden="true"></div>
+            <div class="dots-grid absolute -bottom-8 -left-8 w-32 h-32 opacity-40 rounded-xl" aria-hidden="true"></div>
+
+            <div class="profile-frame">
+              <div class="profile-inner">
+                <img src="myphoto.png" alt="Paweł Binda" class="w-full h-full object-cover" />
+                
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /grid -->
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+
+  <!-- ════════════════════════════════════════
+       ABOUT ME SECTION
+  ════════════════════════════════════════ -->
+  <section id="about" class="section-wrap py-28">
+    <div class="max-w-6xl mx-auto px-6">
+
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+        <!-- Left: decorative block -->
+        <div class="relative reveal">
+          <div class="dots-grid absolute inset-0 opacity-30 rounded-3xl" aria-hidden="true"></div>
+          <div class="relative bg-card border border-border rounded-3xl overflow-hidden p-10">
+            <!-- Inner glow -->
+            <div class="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none"
+                 style="background:radial-gradient(circle, rgba(139,92,246,0.08) 0%,transparent 70%); transform:translate(30%,-30%)"></div>
+
+            <p class="section-label">Terminal</p>
+            <!-- Fake terminal snippet -->
+            <div class="font-mono text-sm mt-4 space-y-2 leading-relaxed">
+              <p><span style="color:#8b5cf6">const</span> <span style="color:#4f8ef7">dev</span> = {</p>
+              <p class="pl-6"><span style="color:#6b7280">name:</span> <span style="color:#86efac">"Paweł Binda"</span>,</p>
+              <p class="pl-6"><span style="color:#6b7280">role:</span> <span style="color:#86efac">"Full-Stack Developer"</span>,</p>
+              <p class="pl-6"><span style="color:#6b7280">cert:</span> <span style="color:#86efac">"INF.03"</span>,</p>
+              <p class="pl-6"><span style="color:#6b7280">passion:</span> <span style="color:#86efac">"Clean, Scalable Code"</span>,</p>
+              <p class="pl-6"><span style="color:#6b7280">available:</span> <span style="color:#f97316">true</span>,</p>
+              <p>};</p>
+            </div>
+
+            <!-- Language bars -->
+            <div class="mt-8 space-y-4">
+              <div>
+                <div class="flex justify-between text-xs text-muted mb-1.5">
+                  <span>Frontend</span><span>90%</span>
+                </div>
+                <div class="w-full h-1.5 bg-border rounded-full overflow-hidden">
+                  <div class="h-full rounded-full" style="width:90%;background:linear-gradient(to right,var(--accent),var(--accent2))"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-xs text-muted mb-1.5">
+                  <span>Backend</span><span>75%</span>
+                </div>
+                <div class="w-full h-1.5 bg-border rounded-full overflow-hidden">
+                  <div class="h-full rounded-full" style="width:75%;background:linear-gradient(to right,var(--accent),var(--accent2))"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-xs text-muted mb-1.5">
+                  <span>C++ / Systems</span><span>65%</span>
+                </div>
+                <div class="w-full h-1.5 bg-border rounded-full overflow-hidden">
+                  <div class="h-full rounded-full" style="width:65%;background:linear-gradient(to right,var(--accent),var(--accent2))"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: about text -->
+        <div class="reveal" style="transition-delay:0.15s">
+          <p class="section-label">About Me</p>
+          <h2 class="font-display font-700 text-[clamp(1.8rem,3vw,2.8rem)] leading-tight mb-6">
+            A Developer Who Cares About <span class="text-accent">Every Detail</span>
+          </h2>
+          <p class="text-muted leading-relaxed mb-5">
+            Hi, I'm <strong class="text-text font-500">Paweł Binda</strong> — a developer based in Poland with a passion for 
+            building web experiences that are both visually compelling and technically solid. I focus 
+            on writing clean, maintainable code that scales, and I care deeply about the end-user experience.
+          </p>
+          <p class="text-muted leading-relaxed mb-8">
+            My focus areas include crafting responsive, performance-first websites, building structured 
+            server-side logic in PHP, and writing low-level system programs in C++. Whether it's a sleek 
+            landing page or a complex web application, I bring the same level of attention and precision.
+          </p>
+
+          <!-- Cert badge -->
+          <div class="cert-badge mb-8">
+            <i class="fa-solid fa-award text-accent text-lg"></i>
+            <div>
+              <p class="font-display font-700 text-sm text-text">INF.03 Certified Professional</p>
+              <p class="text-xs text-muted mt-0.5">Official qualification in programming & software development</p>
+            </div>
+          </div>
+
+          <!-- Values -->
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex items-center gap-2 text-sm text-muted">
+              <i class="fa-solid fa-check text-accent text-xs"></i> Responsive Design
+            </div>
+            <div class="flex items-center gap-2 text-sm text-muted">
+              <i class="fa-solid fa-check text-accent text-xs"></i> Clean Architecture
+            </div>
+            <div class="flex items-center gap-2 text-sm text-muted">
+              <i class="fa-solid fa-check text-accent text-xs"></i> Performance First
+            </div>
+            <div class="flex items-center gap-2 text-sm text-muted">
+              <i class="fa-solid fa-check text-accent text-xs"></i> Cross-browser Support
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+
+  <!-- ════════════════════════════════════════
+       SKILLS SECTION
+  ════════════════════════════════════════ -->
+  <section id="skills" class="section-wrap py-28">
+    <div class="max-w-6xl mx-auto px-6">
+
+      <div class="text-center mb-16 reveal">
+        <p class="section-label justify-center">Tech Stack</p>
+        <h2 class="font-display font-700 text-[clamp(1.8rem,3vw,2.8rem)] leading-tight">
+          Technologies I Work With
+        </h2>
+        <p class="text-muted mt-3 max-w-lg mx-auto text-[0.95rem]">
+          From low-level systems programming to polished frontend interfaces — here's the toolkit I rely on.
+        </p>
+      </div>
+
+      <!--
+        ── SKILL CARDS ──
+        To add more skills: copy a .skill-card block, adjust the icon, color, and name.
+      -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+
+        <!-- C++ -->
+        <div class="skill-card reveal">
+          <div class="skill-icon" style="background:rgba(0,89,220,0.12)">
+            <i class="fa-solid fa-code" style="color:#0059dc"></i>
+          </div>
+          <div>
+            <p class="font-display font-700 text-sm">C++</p>
+            <p class="text-muted text-[0.72rem] mt-0.5">Systems / OOP</p>
+          </div>
+        </div>
+
+        <!-- HTML5 -->
+        <div class="skill-card reveal" style="transition-delay:0.05s">
+          <div class="skill-icon" style="background:rgba(228,77,38,0.12)">
+            <i class="fa-brands fa-html5" style="color:#e44d26"></i>
+          </div>
+          <div>
+            <p class="font-display font-700 text-sm">HTML5</p>
+            <p class="text-muted text-[0.72rem] mt-0.5">Semantic Markup</p>
+          </div>
+        </div>
+
+        <!-- CSS3 -->
+        <div class="skill-card reveal" style="transition-delay:0.1s">
+          <div class="skill-icon" style="background:rgba(21,114,182,0.12)">
+            <i class="fa-brands fa-css3-alt" style="color:#1572b6"></i>
+          </div>
+          <div>
+            <p class="font-display font-700 text-sm">CSS3</p>
+            <p class="text-muted text-[0.72rem] mt-0.5">Animations / Grid</p>
+          </div>
+        </div>
+
+        <!-- JavaScript -->
+        <div class="skill-card reveal" style="transition-delay:0.15s">
+          <div class="skill-icon" style="background:rgba(247,223,30,0.10)">
+            <i class="fa-brands fa-js" style="color:#f7df1e"></i>
+          </div>
+          <div>
+            <p class="font-display font-700 text-sm">JavaScript</p>
+            <p class="text-muted text-[0.72rem] mt-0.5">ES6+ / DOM</p>
+          </div>
+        </div>
+
+        <!-- Bootstrap -->
+        <div class="skill-card reveal" style="transition-delay:0.2s">
+          <div class="skill-icon" style="background:rgba(121,82,179,0.12)">
+            <i class="fa-brands fa-bootstrap" style="color:#7952b3"></i>
+          </div>
+          <div>
+            <p class="font-display font-700 text-sm">Bootstrap</p>
+            <p class="text-muted text-[0.72rem] mt-0.5">Responsive UI</p>
+          </div>
+        </div>
+
+        <!-- PHP -->
+        <div class="skill-card reveal" style="transition-delay:0.25s">
+          <div class="skill-icon" style="background:rgba(119,123,179,0.12)">
+            <i class="fa-brands fa-php" style="color:#777bb3"></i>
+          </div>
+          <div>
+            <p class="font-display font-700 text-sm">PHP</p>
+            <p class="text-muted text-[0.72rem] mt-0.5">Backend / APIs</p>
+          </div>
+        </div>
+
+        <!-- Vite.js -->
+        <div class="skill-card reveal" style="transition-delay:0.3s">
+          <div class="skill-icon" style="background:rgba(100,108,255,0.12)">
+            <!-- Vite logo via SVG inline -->
+            <svg width="22" height="22" viewBox="0 0 410 404" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M399.641 59.5246L215.643 388.545C211.844 395.338 202.084 395.378 198.228 388.618L10.5817 59.5563C6.38087 52.1896 12.6802 43.3565 21.0281 44.7803L205.223 76.7068C206.408 76.9128 207.625 76.9071 208.809 76.6898L388.72 44.8026C397.043 43.3543 403.371 52.1393 399.641 59.5246Z" fill="url(#paint0_linear_vite)"/>
+              <path d="M292.965 1.5744L156.801 28.2552C154.563 28.6937 152.906 30.5903 152.771 32.8664L144.395 174.33C144.198 177.662 147.258 180.248 150.51 179.498L188.42 170.749C191.967 169.938 195.172 172.859 194.839 176.498L182.86 307.181C182.557 310.483 186.069 312.842 188.956 311.135L210.519 298.932C213.411 297.222 216.928 299.594 216.618 302.904L201.542 458.305C201.175 462.18 206.676 463.93 209.177 460.793L212.434 456.674L346.596 151.541C348.247 147.784 344.974 143.724 340.93 144.563L301.228 152.908C297.592 153.679 294.371 150.393 295.495 146.861L331.797 31.8225C332.921 28.2905 329.7 24.9974 326.065 25.7716L293.965 32.0764" fill="url(#paint1_linear_vite)"/>
+              <defs>
+                <linearGradient id="paint0_linear_vite" x1="6.00017" y1="32.9999" x2="235" y2="344" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#41D1FF"/>
+                  <stop offset="1" stop-color="#BD34FE"/>
+                </linearGradient>
+                <linearGradient id="paint1_linear_vite" x1="194.651" y1="8.81818" x2="236.076" y2="292.989" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#FF3E00"/>
+                  <stop offset="0.4087" stop-color="#FF7800"/>
+                  <stop offset="0.6352" stop-color="#FFB800"/>
+                  <stop offset="1" stop-color="#FF0"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div>
+            <p class="font-display font-700 text-sm">Vite.js</p>
+            <p class="text-muted text-[0.72rem] mt-0.5">Build Tooling</p>
+          </div>
+        </div>
+
+        <!-- Git (bonus) -->
+        <div class="skill-card reveal" style="transition-delay:0.35s">
+          <div class="skill-icon" style="background:rgba(240,80,51,0.12)">
+            <i class="fa-brands fa-git-alt" style="color:#f05033"></i>
+          </div>
+          <div>
+            <p class="font-display font-700 text-sm">Git</p>
+            <p class="text-muted text-[0.72rem] mt-0.5">Version Control</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+
+  <!-- ════════════════════════════════════════
+       PROJECTS SECTION
+  ════════════════════════════════════════ -->
+  <section id="projects" class="section-wrap py-28">
+    <div class="max-w-6xl mx-auto px-6">
+
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-16 reveal">
+        <div>
+          <p class="section-label">Portfolio</p>
+          <h2 class="font-display font-700 text-[clamp(1.8rem,3vw,2.8rem)] leading-tight">
+            Selected Projects
+          </h2>
+        </div>
+        <p class="text-muted text-sm max-w-xs sm:text-right">
+          Each project is crafted with care — built to perform and built to last.
+        </p>
+      </div>
+
+      <!--
+        ── PROJECT CARDS ──
+        To add/edit: change href, title, description, tech tags, and emoji.
+        Set href to your live project URL or "#" if not yet deployed.
+      -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Project 1 -->
+        <a href="auto-serwis-warsaw-shine.vercel.app" target="_blank" rel="noopener" class="project-card reveal group" data-href="#">
+          <div class="project-img" style="background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 100%)">
+            <span style="position:relative;z-index:1">🛒</span>
+          </div>
+          <div class="p-6 flex flex-col flex-1">
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="font-display font-700 text-base">Local mechanic </h3>
+              <span class="text-accent opacity-0 group-hover:opacity-100 transition-opacity text-sm">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </span>
+            </div>
+            <p class="text-muted text-sm leading-relaxed flex-1 mb-5">
+                A premium, modern landing page built for a local automotive repair shop in Warsaw. Designed with a focus on high conversion rates, intuitive user experience, and a sleek, industrial aesthetic.
+            </p>
+            <div class="flex flex-wrap gap-2 mb-5">
+              <span class="tech-tag">TypeScript</span>
+              <span class="tech-tag">HTML</span>
+              <span class="tech-tag">CSS</span>
+              <span class="tech-tag">JavaScript</span>
+            </div>
+            <span class="btn-primary text-xs py-2 px-4 self-start">
+              Live Demo <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+
+        <!-- Project 2 -->
+        <a href="landing-page-dla-restauracji-w-wars.vercel.app" target="_blank" rel="noopener" class="project-card reveal group" style="transition-delay:0.1s" data-href="#">
+          <div class="project-img" style="background:linear-gradient(135deg,#0c1a0c 0%,#064e3b 100%)">
+            <span style="position:relative;z-index:1">📋</span>
+          </div>
+          <div class="p-6 flex flex-col flex-1">
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="font-display font-700 text-base">Miyako Ramen landing page </h3>
+              <span class="text-accent opacity-0 group-hover:opacity-100 transition-opacity text-sm">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </span>
+            </div>
+            <p class="text-muted text-sm leading-relaxed flex-1 mb-5">
+                A sophisticated, dark-themed landing page designed for a premium Japanese restaurant located in Warsaw (Hala Koszyki). Crafted to showcase the menu elegantly and handle real-time customer engagement.
+            </p>
+            <div class="flex flex-wrap gap-2 mb-5">
+              <span class="tech-tag">Tailwind</span>
+              <span class="tech-tag">Vite.js</span>
+              <span class="tech-tag">CSS3</span>
+            </div>
+            <span class="btn-primary text-xs py-2 px-4 self-start">
+              Live Demo <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+
+        <!-- Project 3 -->
+        <a href="dev-weather-app-kappa.vercel.app" target="_blank" rel="noopener" class="project-card reveal group" style="transition-delay:0.2s" data-href="#">
+          <div class="project-img" style="background:linear-gradient(135deg,#1a0a00 0%,#7c2d12 100%)">
+            <span style="position:relative;z-index:1">🎮</span>
+          </div>
+          <div class="p-6 flex flex-col flex-1">
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="font-display font-700 text-base">Dev Weather App</h3>
+              <span class="text-accent opacity-0 group-hover:opacity-100 transition-opacity text-sm">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </span>
+            </div>
+            <p class="text-muted text-sm leading-relaxed flex-1 mb-5">
+            A high-end, responsive data dashboard tracking live weather metrics and analytics. It demonstrates the ability to manage modern build tools and seamlessly integrate complex third-party data visualization libraries.
+            </p>
+            <div class="flex flex-wrap gap-2 mb-5">
+              <span class="tech-tag">Tailwind</span>
+              <span class="tech-tag">Html</span>
+              <span class="tech-tag">Chart.js</span>
+            </div>
+            <span class="btn-primary text-xs py-2 px-4 self-start">
+              Live Demo <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+
+      </div><!-- /grid -->
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+
+  <!-- ════════════════════════════════════════
+       CONTACT SECTION
+  ════════════════════════════════════════ -->
+  <section id="contact" class="section-wrap py-28">
+    <div class="max-w-6xl mx-auto px-6">
+
+      <div class="text-center mb-16 reveal">
+        <p class="section-label justify-center">Get in Touch</p>
+        <h2 class="font-display font-700 text-[clamp(1.8rem,3vw,2.8rem)] leading-tight">
+          Let's Work Together
+        </h2>
+        <p class="text-muted mt-3 max-w-lg mx-auto text-[0.95rem]">
+          Have a project in mind? I'd love to hear about it. 
+          Send me a message and I'll get back to you as soon as possible.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-5 gap-10">
+
+        <!-- Contact form (wider) -->
+        <div class="lg:col-span-3 reveal">
+          <div class="bg-card border border-border rounded-2xl p-8">
+            <!--
+              ── CONTACT FORM ──
+              This form is purely visual/UI.
+              To make it functional, connect it to a backend (PHP/email service)
+              or a service like Formspree: action="https://formspree.io/f/YOUR_ID"
+            -->
+            <form id="contact-form" novalidate>
+              <div class="grid sm:grid-cols-2 gap-5 mb-5">
+                <div>
+                  <label class="block text-xs font-600 text-muted uppercase tracking-wider mb-2" for="name">Name</label>
+                  <input id="name" name="name" type="text" placeholder="Your name"
+                         class="form-field" required />
+                </div>
+                <div>
+                  <label class="block text-xs font-600 text-muted uppercase tracking-wider mb-2" for="email">Email</label>
+                  <input id="email" name="email" type="email" placeholder="your@email.com"
+                         class="form-field" required />
+                </div>
+              </div>
+              <div class="mb-5">
+                <label class="block text-xs font-600 text-muted uppercase tracking-wider mb-2" for="subject">Subject</label>
+                <input id="subject" name="subject" type="text" placeholder="What's this about?"
+                       class="form-field" />
+              </div>
+              <div class="mb-6">
+                <label class="block text-xs font-600 text-muted uppercase tracking-wider mb-2" for="message">Message</label>
+                <textarea id="message" name="message" rows="5" placeholder="Tell me about your project..."
+                          class="form-field resize-none" required></textarea>
+              </div>
+              <button type="submit" class="btn-primary w-full justify-center py-3">
+                <i class="fa-solid fa-paper-plane text-xs"></i> Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Contact info (narrower) -->
+        <div class="lg:col-span-2 flex flex-col gap-5 reveal" style="transition-delay:0.15s">
+
+          <!-- Direct contact items -->
+          <!--
+            ── CONTACT INFO ──
+            Edit Name, Phone, and Email below as needed.
+          -->
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fa-solid fa-user"></i></div>
+            <div>
+              <p class="text-xs text-muted uppercase tracking-wider mb-0.5">Name</p>
+              <p class="font-display font-700 text-sm">Paweł Binda</p>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fa-solid fa-phone"></i></div>
+            <div>
+              <p class="text-xs text-muted uppercase tracking-wider mb-0.5">Phone</p>
+              <a href="tel:+48795736076" class="font-display font-700 text-sm hover:text-accent transition-colors">
+                +48 795 736 076
+              </a>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fa-solid fa-envelope"></i></div>
+            <div>
+              <p class="text-xs text-muted uppercase tracking-wider mb-0.5">Email</p>
+              <a href="mailto:pbinda321@gmail.com" class="font-display font-700 text-sm hover:text-accent transition-colors break-all">
+                pbinda321@gmail.com
+              </a>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fa-solid fa-location-dot"></i></div>
+            <div>
+              <p class="text-xs text-muted uppercase tracking-wider mb-0.5">Location</p>
+              <p class="font-display font-700 text-sm">Poland 🇵🇱</p>
+            </div>
+          </div>
+
+          <!-- Availability banner -->
+          <div class="bg-card border border-border rounded-2xl p-6 mt-2">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse"></span>
+              <span class="font-display font-700 text-sm text-text">Currently Available</span>
+            </div>
+            <p class="text-muted text-xs leading-relaxed">
+              Open to freelance projects, part-time contracts, and full-time roles. 
+              Typical response time: <strong class="text-text">under 24 hours.</strong>
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+
+  <!-- ════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════ -->
+  <footer class="section-wrap py-10">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+
+        <!-- Brand -->
+        <a href="#home" class="flex items-center gap-2 text-text no-underline">
+          <span class="w-8 h-8 rounded-lg bg-accent flex items-center justify-center text-white font-display font-bold text-sm">PB</span>
+          <span class="font-display font-700 text-[0.95rem] tracking-tight">Paweł Binda<span class="text-accent">.</span></span>
+        </a>
+
+        <!-- Copyright -->
+        <p class="text-muted text-xs text-center">
+          © <span id="year"></span> Paweł Binda. Crafted with care.
+        </p>
+
+        <!-- Social links — update hrefs with your actual profiles -->
+        <div class="flex items-center gap-2">
+          <a href="https://github.com/pBinda777" target="_blank" rel="noopener" class="social-btn" aria-label="GitHub">
+            <i class="fa-brands fa-github"></i>
+          </a>
+          <a href="https://www.linkedin.com/in/paweł-binda-1454b9373/?isSelfProfile=true" target="_blank" rel="noopener" class="social-btn" aria-label="LinkedIn">
+            <i class="fa-brands fa-linkedin-in"></i>
+          </a>
+          <a href="mailto:pbinda321@gmail.com" class="social-btn" aria-label="Email">
+            <i class="fa-solid fa-envelope"></i>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ── Toast notification ── -->
+  <div id="toast" role="alert" aria-live="polite">
+    <i class="fa-solid fa-circle-check" style="color:#4ade80"></i>
+    <span id="toast-msg">Message sent!</span>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       JAVASCRIPT
+  ════════════════════════════════════════ -->
+  <script>
+    /* ── Year in footer ── */
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* ── Navbar: scroll state + active link ── */
+    const navbar = document.getElementById('navbar');
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    window.addEventListener('scroll', () => {
+      // Scrolled state for solid bg
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+
+      // Active section highlight
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 120) current = s.id;
+      });
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+      });
+    }, { passive: true });
+
+    /* ── Hamburger menu ── */
+    const hamburger  = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+    });
+
+    // Close mobile menu on link click
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        mobileMenu.classList.remove('open');
+      });
+    });
+
+    /* ── Scroll-reveal with IntersectionObserver ── */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* ── Contact form demo handler ── */
+    const form  = document.getElementById('contact-form');
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toast-msg');
+
+    function showToast(msg, success = true) {
+      toastMsg.textContent = msg;
+      toast.querySelector('i').className = success
+        ? 'fa-solid fa-circle-check'
+        : 'fa-solid fa-circle-exclamation';
+      toast.querySelector('i').style.color = success ? '#4ade80' : '#f87171';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name    = document.getElementById('name').value.trim();
+      const email   = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+
+      if (!name || !email || !message) {
+        showToast('Please fill in all required fields.', false);
+        return;
+      }
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if (!emailOk) {
+        showToast('Please enter a valid email address.', false);
+        return;
+      }
+
+      /*
+        TODO: Replace this block with a real form submission.
+        Options:
+          1. Fetch to your PHP endpoint: fetch('/mailer.php', { method:'POST', body: new FormData(form) })
+          2. Formspree: <form action="https://formspree.io/f/YOUR_ID" method="POST">
+          3. EmailJS: emailjs.send(...)
+      */
+      showToast(`Thanks ${name}! I'll get back to you soon. ✉️`);
+      form.reset();
+    });
+
+    /* ── Smooth scroll for all anchor links ── */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', (e) => {
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

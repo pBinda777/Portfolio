@@ -1043,33 +1043,37 @@
               To make it functional, connect it to a backend (PHP/email service)
               or a service like Formspree: action="https://formspree.io/f/YOUR_ID"
             -->
-            <form id="contact-form" novalidate>
-              <div class="grid sm:grid-cols-2 gap-5 mb-5">
-                <div>
-                  <label class="block text-xs font-600 text-muted uppercase tracking-wider mb-2" for="name">Name</label>
-                  <input id="name" name="name" type="text" placeholder="Your name"
-                         class="form-field" required />
-                </div>
-                <div>
-                  <label class="block text-xs font-600 text-muted uppercase tracking-wider mb-2" for="email">Email</label>
-                  <input id="email" name="email" type="email" placeholder="your@email.com"
-                         class="form-field" required />
-                </div>
+          <form id="contact-form" action="https://api.web3forms.com/submit" method="POST" novalidate>
+            <input type="hidden" name="access_key" value="TUTAJ_WKLEJ_TWÓJ_KLUCZ_Z_MAILA">
+            
+            <input type="hidden" name="redirect" value="https://portfolio-ashen-chi-af3b8l1e6i.vercel.app">
+
+            <div class="grid sm:grid-cols-2 gap-5 mb-5">
+              <div>
+                <label class="block text-xs font-600 text-muted uppercase tracking-wider mb-2" for="name">Name</label>
+                <input id="name" name="name" type="text" placeholder="Your name"
+                      class="form-field" required />
               </div>
-              <div class="mb-5">
-                <label class="block text-xs font-600 text-muted uppercase tracking-wider mb-2" for="subject">Subject</label>
-                <input id="subject" name="subject" type="text" placeholder="What's this about?"
-                       class="form-field" />
+              <div>
+                <label class="block text-xs font-600 text-muted uppercase tracking-wider mb-2" for="email">Email</label>
+                <input id="email" name="email" type="email" placeholder="your@email.com"
+                      class="form-field" required />
               </div>
-              <div class="mb-6">
-                <label class="block text-xs font-600 text-muted uppercase tracking-wider mb-2" for="message">Message</label>
-                <textarea id="message" name="message" rows="5" placeholder="Tell me about your project..."
-                          class="form-field resize-none" required></textarea>
-              </div>
-              <button type="submit" class="btn-primary w-full justify-center py-3">
-                <i class="fa-solid fa-paper-plane text-xs"></i> Send Message
-              </button>
-            </form>
+            </div>
+            <div class="mb-5">
+              <label class="block text-xs font-600 text-muted uppercase tracking-wider mb-2" for="subject">Subject</label>
+              <input id="subject" name="subject" type="text" placeholder="What's this about?"
+                    class="form-field" />
+            </div>
+            <div class="mb-6">
+              <label class="block text-xs font-600 text-muted uppercase tracking-wider mb-2" for="message">Message</label>
+              <textarea id="message" name="message" rows="5" placeholder="Tell me about your project..."
+                        class="form-field resize-none" required></textarea>
+            </div>
+            <button type="submit" class="btn-primary w-full justify-center py-3 cursor-pointer">
+              <i class="fa-solid fa-paper-plane text-xs"></i> Send Message
+            </button>
+          </form>
           </div>
         </div>
 
